@@ -1,0 +1,16 @@
+# .gitignore
+
+# Virtual Environment
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# IDE/Editor config
+.vscode/
+.idea/
+
+# Secret environment variables
+# We will create this file soon
+.env
