@@ -40,6 +40,7 @@ git clone [https://github.com/JojoBaPb/url-shortener.git](https://github.com/Joj
 cd url-shortener
 
 
+
 2. Create and Activate a Virtual Environment
 
 # Create venv
@@ -52,11 +53,13 @@ source venv/bin/activate
 # .\venv\Scripts\activate
 
 
+
 3. Install Dependencies
 
 Install all required libraries from the requirements.txt file.
 
 pip install -r requirements.txt
+
 
 
 4. Set Up PostgreSQL Database
@@ -72,16 +75,19 @@ sudo service postgresql start
 # sudo systemctl start postgresql
 
 
+
 Set a Password for the postgres User:
 
 # Replace 'mysecretpassword' with your own
 sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'mysecretpassword';"
 
 
+
 Create the Database:
 
 # Replace 'url_shortener_db' if you use a different name
 sudo -u postgres createdb url_shortener_db
+
 
 
 5. Create Your .env File
@@ -97,11 +103,13 @@ Add your database URL. (This must match the credentials from Step 4).
 DATABASE_URL="postgresql+asyncpg://postgres:mysecretpassword@localhost:5432/url_shortener_db"
 
 
+
 How to Run the Application
 
 With your virtual environment active and your .env file in place, run the server using uvicorn:
 
 uvicorn main:app --reload
+
 
 
 main: The file main.py.
@@ -136,6 +144,7 @@ Request Body:
 }
 
 
+
 Success Response (200):
 
 {
@@ -144,6 +153,7 @@ Success Response (200):
   "clicks": 0,
   "key": "aBc123X"
 }
+
 
 
 3. GET /{short_key}
@@ -159,6 +169,7 @@ Error Response (404): If the short_key is not found.
 {
   "detail": "URL with key 'aBc123X' not found."
 }
+
 
 
 4. GET /stats/{short_key}
@@ -177,8 +188,10 @@ Success Response (200):
 }
 
 
+
 Error Response (404): If the short_key is not found.
 
 {
   "detail": "URL with key 'aBc123X' not found."
 }
+
