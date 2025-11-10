@@ -12,7 +12,7 @@ class URLInfo(URLBase):
     """Schema for returning URL info to the user."""
     is_active: bool
     clicks: int
-    short_code: str
+    key: str
 
     class Config:
         """Tells Pydantic to read data from ORM models."""

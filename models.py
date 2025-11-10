@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Boolean, BigInteger
-from .database import Base # Import the Base from database.py file
+from database import Base # Import the Base from database.py file
 
 class URL(Base):
     """
