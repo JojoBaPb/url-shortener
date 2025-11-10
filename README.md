@@ -178,3 +178,7 @@ Success Response (200):
 
 
 Error Response (404): If the short_key is not found.
+
+{
+  "detail": "URL with key 'aBc123X' not found."
+}
