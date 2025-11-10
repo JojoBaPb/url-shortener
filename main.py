@@ -113,3 +113,25 @@ async def create_short_url(
     
     # Return the data, formatted by the `response_model`
     return db_url
+
+@app.get("/stats/{short_key}", response_model=schemas.URLInfo)
+async def get_url_stats(
+    short_key: str,
+    db: AsyncSession = Depends(get_db_session)
+):
+    """
+    Get statistics for a short URL (clicks, target URL, etc.).
+    """
+    # 1. Look up the key in the database
+    db_url = await get_url_by_key(db, short_key)
+
+    if db_url is None:
+        # 2. If not found, raise a 404 error
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"URL with key '{short_key}' not found."
+        )
+
+    # 3. Return the URL data
+    # FastAPI will format this using the URLInfo response_model
+    return db_url
