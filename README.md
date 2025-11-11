@@ -49,7 +49,7 @@ python3 -m venv venv
 source venv/bin/activate
 
 # Activate on Windows
-.env\Scriptsctivate
+.\env\Scripts\activate
 ```
 
 ---
