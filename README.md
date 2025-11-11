@@ -1,6 +1,6 @@
 # 🚀 Python URL Shortener Service
 
-A **complete, high-performance URL shortener** built from scratch using **Python**, **FastAPI**, and **PostgreSQL**.  
+A **complete,  high-performance URL shortener** built from scratch using **Python**, **FastAPI**, and **PostgreSQL**.  
 Optimized for **speed**, **asynchronous execution**, and **scalability**.
 
 ---
