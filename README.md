@@ -34,7 +34,7 @@ Optimized for **speed**, **asynchronous execution**, and **scalability**.
 
 ### 1️⃣ Clone the Repository
 ```bash
-git clone https://github.com/JojoBaPb/url-shortener.git
+git clone https://github.com/YOUR-USERNAME/url-shortener.git
 cd url-shortener
 ```
 
