@@ -1,184 +1,92 @@
-# 🚀 Python URL Shortener Service
+Enterprise-Grade URL Shortener Service (GDPR Compliant)
 
-A **complete,  high-performance URL shortener** built from scratch using **Python**, **FastAPI**, and **PostgreSQL**.  
-Optimized for **speed**, **asynchronous execution**, and **scalability**.
+This is a professional, high-performance URL shortener service built with Python, FastAPI, and PostgreSQL. It features a "Right to be Forgotten" implementation to comply with GDPR data privacy standards.
 
----
+Features
 
-## ✨ Features
+Create Short URLs: Convert long URLs into unique 7-character short keys.
 
-- 🔗 **Create Short URLs:** Convert any long URL into a unique 7-character short key.  
-- ⚡ **Fast Redirects:** Handles short URL redirects using HTTP `307 Temporary Redirect`.  
-- 📈 **Click Tracking:** Automatically counts how many times each short URL is accessed.  
-- 📊 **Stats Endpoint:** Check click counts and target URLs for any short key.  
-- 🧵 **Async First:** Powered by `asyncio`, `FastAPI`, `SQLAlchemy (async)`, and `asyncpg`.  
-- ✅ **Data Validation:** Uses **Pydantic** for reliable request & response validation.
+Privacy First (GDPR): Every created URL generates a private secret_key. This key allows users to manage or delete their data without needing a full account system.
 
----
+Secure Deletion: A dedicated DELETE endpoint for the "Right to be Forgotten," physically removing data from the database.
 
-## 🧰 Tech Stack
+Strict Validation: Uses Pydantic Field for robust data integrity and auto-generated documentation.
 
-| Component | Technology |
-|------------|-------------|
-| **Framework** | FastAPI |
-| **Database** | PostgreSQL |
-| **ORM** | SQLAlchemy 2.0 (Async) |
-| **Database Driver** | asyncpg |
-| **Data Validation** | Pydantic |
-| **Configuration** | Pydantic-Settings |
-| **Server** | Uvicorn |
+Async Architecture: Fully asynchronous stack using FastAPI, SQLAlchemy 2.0, and asyncpg.
 
----
+Click Tracking: Real-time analytics for every shortened link.
 
-## ⚙️ Project Setup & Installation
+Tech Stack
 
-### 1️⃣ Clone the Repository
-```bash
+Framework: FastAPI
+
+Database: PostgreSQL
+
+ORM: SQLAlchemy 2.0 (Async)
+
+Validation: Pydantic v2
+
+Server: Uvicorn
+
+Project Setup & Installation
+
+1. Clone & Environment
+
 git clone https://github.com/JojoBaPb/url-shortener.git
 cd url-shortener
-```
-
----
-
-### 2️⃣ Create and Activate a Virtual Environment
-```bash
-# Create venv
 python3 -m venv venv
-
-# Activate on Linux/macOS
-source venv/bin/activate
-
-# Activate on Windows
-.\env\Scripts\activate
-```
-
----
-
-### 3️⃣ Install Dependencies
-```bash
+source venv/bin/activate  # or venv\Scripts\activate on Windows
 pip install -r requirements.txt
-```
 
----
 
-### 4️⃣ Set Up PostgreSQL Database
+2. Database & Environment Variables
 
-Ensure PostgreSQL is running:
+Ensure PostgreSQL is running and create your database. Then, create a .env file:
 
-```bash
-# On WSL (Ubuntu)
-sudo service postgresql start
+DATABASE_URL="postgresql+asyncpg://user:password@localhost:5432/url_shortener_db"
 
-# On other Linux systems
-sudo systemctl start postgresql
-```
 
-Set a password for the default user:
-```bash
-sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'mysecretpassword';"
-```
+3. Run the App
 
-Create a database:
-```bash
-sudo -u postgres createdb url_shortener_db
-```
-
----
-
-### 5️⃣ Create Your `.env` File
-
-Create a `.env` file in the project root with the following:
-```bash
-DATABASE_URL="postgresql+asyncpg://postgres:mysecretpassword@localhost:5432/url_shortener_db"
-```
-
----
-
-## ▶️ How to Run the Application
-
-Run the FastAPI server:
-```bash
 uvicorn main:app --reload
-```
 
-**Explanation:**
-- `main` → The file `main.py`  
-- `app` → The `FastAPI()` instance  
-- `--reload` → Auto-restarts on file changes (for development)
 
-Once running:
-- 🌐 **App:** http://127.0.0.1:8000  
-- 📘 **Docs (Swagger UI):** http://127.0.0.1:8000/docs  
+Access the interactive docs at: http://127.0.0.1:8000/docs
 
----
+API Endpoints
 
-## 🔌 API Endpoints
+1. Create URL (POST /create)
 
-### 1. `GET /`
-**Description:** Health check endpoint.  
-**Response:**
-```json
-{"message": "URL Shortener is running!"}
-```
+Generates a short link. Save the secret_key returned in the response; it is the only time it will be shown.
 
----
+Request: {"target_url": "https://example.com"}
 
-### 2. `POST /create`
-**Description:** Creates a new short URL.  
-**Request Body:**
-```json
-{
-  "target_url": "https://www.your-long-url.com/goes/here"
-}
-```
+Returns: key and secret_key.
 
-**Success Response (200):**
-```json
-{
-  "target_url": "https://www.your-long-url.com/goes/here",
-  "is_active": true,
-  "clicks": 0,
-  "key": "aBc123X"
-}
-```
+2. Redirect (GET /{short_key})
 
----
+Redirects to the target URL and increments the click counter.
 
-### 3. `GET /{short_key}`
-**Description:** Redirects to the target URL and increments click count.  
-**Example Request:**  
-`GET http://127.0.0.1:8000/aBc123X`
+3. Statistics (GET /stats/{secret_key})
 
-**Success Response (307):** Temporary Redirect to the target URL.  
-**Error (404):**
-```json
-{"detail": "URL with key 'aBc123X' not found."}
-```
+Retrieves click counts and metadata. Requires the private secret_key for access.
 
----
+4. Delete / Right to be Forgotten (DELETE /admin/{secret_key})
 
-### 4. `GET /stats/{short_key}`
-**Description:** Retrieve click stats and target info.  
-**Example Request:**  
-`GET http://127.0.0.1:8000/stats/aBc123X`
+Permanently removes the URL and all associated data from the system.
 
-**Success Response (200):**
-```json
-{
-  "target_url": "https://www.your-long-url.com/goes/here",
-  "is_active": true,
-  "clicks": 5,
-  "key": "aBc123X"
-}
-```
+Returns: 204 No Content on success.
 
-**Error (404):**
-```json
-{"detail": "URL with key 'aBc123X' not found."}
-```
+Project Structure
 
----
+main.py: API Routing and FastAPI configuration.
 
-## 🧠 Summary
+models.py: SQLAlchemy database models.
 
-This project demonstrates how to build a **production-ready**, **asynchronous FastAPI service** with clean architecture, database integration, and real-time analytics — ideal for learning and deployment in modern Python backends.
+schemas.py: Pydantic data schemas and validation.
+
+crud.py: Create, Read, Update, and Delete logic.
+
+keygen.py: Unique string generation utilities.
+
+database.py: Database engine and session management.
