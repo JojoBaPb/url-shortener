@@ -1,7 +1,3 @@
-<p align="center">
-<img src="https://www.google.com/search?q=https://cdn-icons-png.flaticon.com/512/2165/2165012.png" width="100" alt="URL Shortener Logo" />
-</p>
-
 🚀 Enterprise URL Shortener (GDPR Compliant)
 
 A robust, high-performance, and GDPR-compliant URL shortening service. Built with a modern asynchronous stack, it provides users with full control over their data via private management keys.
