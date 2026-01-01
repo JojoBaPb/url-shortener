@@ -1,137 +1,62 @@
-from fastapi import FastAPI, Depends, HTTPException, status, Request
+from fastapi import FastAPI, Depends, HTTPException, status, Response
 from fastapi.responses import RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
 
-import secrets
-import string
-
-import models, schemas, config
+import models, schemas, crud
 from database import engine, Base, get_db_session
 
-# --- Database Setup ---
-
-async def create_db_and_tables():
-    """Create database tables on startup."""
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-
-# Create the FastAPI app instance
-app = FastAPI()
+app = FastAPI(title="Enterprise URL Shortener")
 
 @app.on_event("startup")
 async def on_startup():
-    """Run the create_db_and_tables function when the app starts."""
-    await create_db_and_tables()
-    
-# --- Helper Functions ---
-
-async def get_url_by_key(db: AsyncSession, key: str) -> models.URL | None:
-    """
-    Get a URL from the database by its short key.
-    """
-    result = await db.execute(
-        select(models.URL).filter(models.URL.key == key)
-    )
-    return result.scalars().first()
-
-async def create_unique_short_key(db: AsyncSession) -> str:
-    """
-    Generate a unique short key.
-    """
-    KEY_LENGTH = 7
-    CHARS = string.ascii_letters + string.digits
-    
-    key = "".join(secrets.choice(CHARS) for _ in range(KEY_LENGTH))
-    
-    # Check if key already exists (very rare)
-    if await get_url_by_key(db, key):
-        return await create_unique_short_key(db) # Try again
-    
-    return key
-
-# --- API Endpoints ---
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
 
 @app.get("/")
 async def root():
-    """
-    Root endpoint for a basic health check.
-    """
-    return {"message": "URL Shortener is running!"}
-
-
-@app.get("/{short_key}")
-async def forward_to_target_url(
-    short_key: str,
-    db: AsyncSession = Depends(get_db_session)
-):
-    """
-    Looks up a short_key and redirects the user to the target_url.
-    Also increments the click counter.
-    """
-    # 1. Look up the key in the database
-    db_url = await get_url_by_key(db, short_key)
-
-    if db_url is None:
-        # 2. If not found, raise a 404 error
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"URL with key '{short_key}' not found."
-        )
-
-    # 3. Increment the click counter
-    db_url.clicks += 1
-    await db.commit()
-
-    # 4. Return a redirect response
-    return RedirectResponse(
-        url=db_url.target_url, status_code=status.HTTP_307_TEMPORARY_REDIRECT
-    )
-
+    return {"message": "Enterprise URL Shortener is online."}
 
 @app.post("/create", response_model=schemas.URLInfo)
 async def create_short_url(
-    url_create: schemas.URLCreate,
+    url_create: schemas.URLCreate, 
     db: AsyncSession = Depends(get_db_session)
 ):
-    """
-    Create a new short URL.
-    """
-    # Create the unique key
-    unique_key = await create_unique_short_key(db)
+    return await crud.create_db_url(db, url_create)
+
+@app.get("/{short_key}")
+async def forward_to_target_url(
+    short_key: str, 
+    db: AsyncSession = Depends(get_db_session)
+):
+    db_url = await crud.get_db_url_by_key(db, short_key)
+    if not db_url:
+        raise HTTPException(status_code=404, detail="URL not found")
     
-    # Create the new database model object
-    db_url = models.URL(
-        target_url=str(url_create.target_url), # Store as a string
-        key=unique_key
-    )
-    
-    # Add to the session and commit
-    db.add(db_url)
+    db_url.clicks += 1
     await db.commit()
-    await db.refresh(db_url) # Get back the data we just saved (like the 'id')
-    
-    # Return the data, formatted by the `response_model`
+    return RedirectResponse(url=db_url.target_url)
+
+@app.get("/stats/{secret_key}", response_model=schemas.URLInfo)
+async def get_url_stats(
+    secret_key: str, 
+    db: AsyncSession = Depends(get_db_session)
+):
+    """Retrieve stats using the secret_key."""
+    db_url = await crud.get_db_url_by_secret_key(db, secret_key)
+    if not db_url:
+        raise HTTPException(status_code=404, detail="Invalid secret key")
     return db_url
 
-@app.get("/stats/{short_key}", response_model=schemas.URLInfo)
-async def get_url_stats(
-    short_key: str,
+@app.delete("/admin/{secret_key}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_url(
+    secret_key: str, 
     db: AsyncSession = Depends(get_db_session)
 ):
     """
-    Get statistics for a short URL (clicks, target URL, etc.).
+    Implements the 'Right to be Forgotten'. 
+    Physically removes the data from the database.
     """
-    # 1. Look up the key in the database
-    db_url = await get_url_by_key(db, short_key)
-
-    if db_url is None:
-        # 2. If not found, raise a 404 error
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"URL with key '{short_key}' not found."
-        )
-
-    # 3. Return the URL data
-    # FastAPI will format this using the URLInfo response_model
-    return db_url
+    success = await crud.delete_db_url(db, secret_key)
+    if not success:
+        raise HTTPException(status_code=404, detail="Secret key not found")
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
