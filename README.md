@@ -84,7 +84,7 @@ pip install -r requirements.txt
 
 
 Configuration
-Create a .env file in the root:
+Create a .env file in the root directory:
 
 DATABASE_URL="postgresql+asyncpg://postgres:yourpassword@localhost:5432/url_shortener_db"
 
@@ -145,4 +145,5 @@ Data Portability: Users can view their data using the secret_key.
 Right to Erasure: Users can instantly and permanently delete their shortened URLs and associated metrics via the /admin endpoint.
 
 <p align="center">
-Developed by <a href="https://www.google.com/search?q=https://github.com/JojoBaPb">Jojo</a> </p>
+Developed with ❤️ by <a href="https://www.google.com/search?q=https://github.com/JojoBaPb">Jojo</a>
+</p>
