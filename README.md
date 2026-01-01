@@ -63,7 +63,7 @@ Docker
 The fastest way to get started is using Docker Compose.
 
 # Clone the repository
-git clone [https://github.com/YOUR_GITHUB_USERNAME/url-shortener.git](https://github.com/YOUR_GITHUB_USERNAME/url-shortener.git)
+git clone https://github.com/JojoBaPb/url-shortener.git
 cd url-shortener
 
 # Spin up the containers
@@ -145,5 +145,4 @@ Data Portability: Users can view their data using the secret_key.
 Right to Erasure: Users can instantly and permanently delete their shortened URLs and associated metrics via the /admin endpoint.
 
 <p align="center">
-Developed with ❤️ by <a href="https://www.google.com/search?q=https://github.com/YOUR_GITHUB_USERNAME">YOUR_NAME</a>
-</p>
+Developed by <a href="https://www.google.com/search?q=https://github.com/JojoBaPb">Jojo</a> </p>
