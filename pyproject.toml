@@ -1,0 +1,15 @@
+[project]
+name = "url-shortener"
+version = "0.2.0"
+description = "A fast, privacy-friendly URL shortener built with FastAPI and PostgreSQL."
+requires-python = ">=3.12"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+# E/F = real errors, I = sorted imports, B = common bugs, UP = modern Python syntax
+select = ["E", "F", "I", "B", "UP"]
+# FastAPI's Depends(...) in default arguments is the documented pattern, not a bug.
+ignore = ["B008"]

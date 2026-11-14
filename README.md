@@ -1,58 +1,35 @@
-<p align="center">
-  <img src="https://cdn-icons-png.flaticon.com/512/2165/2165012.png" width="100" alt="URL Shortener Logo" />
-</p>
+<h1 align="center">🚀 URL Shortener</h1>
 
-<h1 align="center">🚀 Enterprise URL Shortener (GDPR Compliant)</h1>
+A URL shortening service built with FastAPI, SQLAlchemy 2.0 and PostgreSQL (or SQLite for local
+development). Every link comes with a private `secret_key` that lets its owner see stats or
+permanently delete the link (right to be forgotten).
 
-<p align="center">
-A robust, high-performance, and GDPR-compliant URL shortening service.<br>
-Built with a modern asynchronous stack, giving users full control over their data via private management keys.
-</p>
+> Work in progress: this README is updated at each upgrade stage.
 
 ---
 
-## 📖 Table of Contents
+## ⚙️ Run It Locally
 
-- [✨ Key Features](#-key-features)
-- [🛠 Tech Stack](#-tech-stack)
-- [📦 Quick Start (Docker)](#-quick-start-docker)
-- [⚙️ Manual Installation](#️-manual-installation)
-- [📡 API Documentation](#-api-documentation)
-- [⚖️ GDPR Compliance](#️-gdpr-compliance)
+```bash
+python -m venv venv
+# Windows:            venv\Scripts\activate
+# Linux/macOS/Termux: source venv/bin/activate
+pip install -r requirements-dev.txt
+cp .env.example .env          # optional: the defaults already work
+uvicorn app.main:app --reload
+```
 
----
+Open http://127.0.0.1:8000/docs for the interactive API docs.
 
-## ✨ Key Features
+## 📡 API
 
-- ⚡ **High Performance** – Fully asynchronous I/O using **FastAPI** and **asyncpg**
-- ⚖️ **Right to be Forgotten** – Users receive a `secret_key` to permanently delete their records
-- 📊 **Real-time Analytics** – Track click counts and activity status
-- 🐳 **Containerized** – Production-ready with Docker & Docker Compose
-- 📝 **Auto-Docs** – Interactive Swagger UI and Redoc support
-
----
+| Method | Path | What it does |
+|---|---|---|
+| POST | `/create` | Shorten a URL. Returns the short `key` and the private `secret_key`. |
+| GET | `/{key}` | Redirects to the original URL and counts the click. |
+| GET | `/stats/{secret_key}` | Shows click count and status. |
+| DELETE | `/admin/{secret_key}` | Permanently deletes the link. |
 
 ## 🛠 Tech Stack
 
-| Component        | Technology            |
-|------------------|-----------------------|
-| Framework        | FastAPI               |
-| Database         | PostgreSQL 15         |
-| ORM              | SQLAlchemy 2.0        |
-| Validation       | Pydantic v2           |
-| Async Driver     | asyncpg               |
-| Containerization | Docker / Docker Compose |
-
----
-
-## 📦 Quick Start (Docker)
-
-The fastest way to get started is using **Docker Compose**.
-
-```bash
-# Clone the repository
-git clone https://github.com/JojoBaPb/url-shortener.git
-cd url-shortener
-
-# Spin up the containers
-docker-compose up --build
+FastAPI · SQLAlchemy 2.0 (async) · Pydantic v2 · asyncpg / aiosqlite

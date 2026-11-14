@@ -1,16 +1,28 @@
-# .gitignore
-
-# Virtual Environment
+# Virtual environments
 venv/
+.venv/
 
 # Python cache
 __pycache__/
 *.pyc
 
+# Tool caches
+.pytest_cache/
+.ruff_cache/
+
 # IDE/Editor config
 .vscode/
 .idea/
 
+# Local databases
+*.db
+*.db-journal
+
 # Secret environment variables
-# We will create this file soon
 .env
+
+# Test coverage data
+.coverage
+
+# Learning notes and tutorials (kept out of the repository)
+Tutorial*.md
