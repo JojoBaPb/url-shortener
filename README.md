@@ -8,7 +8,16 @@ permanently delete the link (right to be forgotten).
 
 ---
 
-## ⚙️ Run It Locally
+## 📦 Quick Start (Docker)
+
+```bash
+docker compose up --build
+```
+
+This starts PostgreSQL and the app, runs the database migrations, and serves the API on
+http://localhost:8000. Interactive docs: http://localhost:8000/docs
+
+## ⚙️ Manual Installation
 
 ```bash
 python -m venv venv
@@ -16,10 +25,22 @@ python -m venv venv
 # Linux/macOS/Termux: source venv/bin/activate
 pip install -r requirements-dev.txt
 cp .env.example .env          # optional: the defaults already work
+alembic upgrade head          # create or update the database tables
 uvicorn app.main:app --reload
 ```
 
-Open http://127.0.0.1:8000/docs for the interactive API docs.
+## 🗄 Database Migrations
+
+The database schema is managed with [Alembic](https://alembic.sqlalchemy.org/).
+
+```bash
+alembic upgrade head                                 # apply all migrations
+alembic revision --autogenerate -m "describe change" # after changing app/models.py
+alembic downgrade -1                                 # undo the last migration
+```
+
+Already running a database created by the old version of this app? Tell Alembic the table
+already exists instead of creating it again: `alembic stamp 0001`.
 
 ## 🧪 Run the Tests
 
@@ -40,4 +61,4 @@ Tests use a temporary SQLite database, so no setup is needed.
 
 ## 🛠 Tech Stack
 
-FastAPI · SQLAlchemy 2.0 (async) · Pydantic v2 · asyncpg / aiosqlite
+FastAPI · SQLAlchemy 2.0 (async) · Alembic · Pydantic v2 · PostgreSQL 16 / SQLite · Docker

@@ -6,16 +6,14 @@ from fastapi.responses import RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import crud, schemas
-from app.database import Base, engine, get_db_session
+from app.database import engine, get_db_session
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
-    # Runs once when the server starts (before the first request)...
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+    # Tables are created by migrations (alembic upgrade head), not here.
     yield
-    # ...and once when it stops: close every pooled database connection cleanly.
+    # Runs once when the server stops: close every pooled database connection cleanly.
     await engine.dispose()
 
 
