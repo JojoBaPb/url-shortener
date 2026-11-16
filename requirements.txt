@@ -3,7 +3,7 @@
 # so this installs cleanly on Windows, Linux, macOS and Termux.
 fastapi==0.162.5
 uvicorn[standard]==0.54.0
-SQLAlchemy[asyncio]==2.1.8
+SQLAlchemy[asyncio]==2.0.36
 asyncpg==0.32.0
 aiosqlite==0.22.1
-pydantic-settings==2.16.2
+pydantic-settings==2.15.0

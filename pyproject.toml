@@ -13,3 +13,9 @@ target-version = "py312"
 select = ["E", "F", "I", "B", "UP"]
 # FastAPI's Depends(...) in default arguments is the documented pattern, not a bug.
 ignore = ["B008"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# Lets us write "async def test_..." without decorating every test.
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"

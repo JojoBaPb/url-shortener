@@ -1,3 +1,6 @@
 # Everything in requirements.txt, plus the tools used only while developing.
 -r requirements.txt
 ruff==0.17.5
+pytest==9.2.0
+pytest-asyncio==1.5.0
+httpx==0.28.1

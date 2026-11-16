@@ -21,6 +21,14 @@ uvicorn app.main:app --reload
 
 Open http://127.0.0.1:8000/docs for the interactive API docs.
 
+## 🧪 Run the Tests
+
+```bash
+pytest
+```
+
+Tests use a temporary SQLite database, so no setup is needed.
+
 ## 📡 API
 
 | Method | Path | What it does |
